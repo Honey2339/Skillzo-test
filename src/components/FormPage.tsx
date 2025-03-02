@@ -3,23 +3,20 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import WorkExpSection from "./WorkExpSection";
+import { FormData, WorkExpSectionProps } from "@/lib/types";
 
 export default function FormPage({
   formData,
   setFormData,
-}: {
-  formData: any;
-  setFormData: any;
-}) {
-  const handleChange = (e) => {
+}: WorkExpSectionProps) {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+    const fieldName = name as keyof FormData;
+
+    setFormData({ ...formData, [fieldName]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(formData);
     alert("Resume data submitted successfully!");
@@ -34,7 +31,7 @@ export default function FormPage({
               <div className="space-y-6">
                 <div>
                   <h2 className="text-xl font-semibold text-white mb-4">
-                    Personal Information
+                    Please Check Your Information
                   </h2>
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>

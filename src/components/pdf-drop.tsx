@@ -6,20 +6,25 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function PDFDropZone({
-  fileData,
-  setFileData,
+  file,
+  setFile,
+  setUploadProgress,
+  setUploadStatus,
+  uploadStatus,
+  uploadProgress,
 }: {
-  fileData: any;
-  setFileData: any;
+  file: File | null;
+  setFile: (file: File) => void;
+  uploadProgress: number;
+  uploadStatus: "idle" | "uploading" | "success" | "error";
+  setUploadProgress: (progress: number) => void;
+  setUploadStatus: (status: "idle" | "uploading" | "success" | "error") => void;
 }) {
+  const router = useRouter();
   const [isDragging, setIsDragging] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadStatus, setUploadStatus] = useState<
-    "idle" | "uploading" | "success" | "error"
-  >("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -54,7 +59,6 @@ export default function PDFDropZone({
 
     if (validateFile(droppedFile)) {
       setFile(droppedFile);
-      simulateUpload(droppedFile);
     }
   };
 
@@ -64,34 +68,7 @@ export default function PDFDropZone({
 
       if (validateFile(selectedFile)) {
         setFile(selectedFile);
-        simulateUpload(selectedFile);
       }
-    }
-  };
-
-  const simulateUpload = (file: File) => {
-    setUploadStatus("uploading");
-    setUploadProgress(0);
-
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setUploadStatus("success");
-          return 100;
-        }
-        return prev + 5;
-      });
-    }, 100);
-  };
-
-  const resetUpload = () => {
-    setFile(null);
-    setUploadProgress(0);
-    setUploadStatus("idle");
-    setErrorMessage("");
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
     }
   };
 
@@ -208,7 +185,6 @@ export default function PDFDropZone({
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={resetUpload}
                       className="ml-2 text-gray-400 hover:text-white"
                     >
                       <X className="h-4 w-4" />
@@ -269,7 +245,6 @@ export default function PDFDropZone({
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={resetUpload}
                       className="ml-2 text-gray-400 hover:text-white"
                     >
                       <X className="h-4 w-4" />
@@ -305,7 +280,6 @@ export default function PDFDropZone({
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={resetUpload}
                       className="ml-2 text-gray-400 hover:text-white"
                     >
                       <X className="h-4 w-4" />
@@ -324,14 +298,11 @@ export default function PDFDropZone({
               >
                 <Button
                   className="w-full mt-4 cursor-pointer"
-                  onClick={resetUpload}
+                  onClick={() => router.push("/form")}
                 >
                   Next
                 </Button>
-                <Button
-                  className="w-full mt-2 bg-purple-600 cursor-pointer hover:bg-purple-700 text-white"
-                  onClick={resetUpload}
-                >
+                <Button className="w-full mt-2 bg-purple-600 cursor-pointer hover:bg-purple-700 text-white">
                   Upload Another File
                 </Button>
               </motion.div>

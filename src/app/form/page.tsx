@@ -1,34 +1,12 @@
 "use client";
 import FormPage from "@/components/FormPage";
-import React, { useState } from "react";
-
-type formData = {
-  name: string;
-  yoe: string;
-  skills: string;
-  education: string;
-  workExperiences: string[];
-  projects: string;
-  certifications: string;
-  languages: string;
-  contact: string;
-};
+import { useFormStore } from "../(store)/formDataStore";
 
 const Form = () => {
-  const [fileData, setFileData] = useState<formData>({
-    name: "",
-    yoe: "",
-    skills: "",
-    education: "",
-    workExperiences: [],
-    projects: "",
-    certifications: "",
-    languages: "",
-    contact: "",
-  });
+  const { formData, setFormData } = useFormStore();
   return (
     <div>
-      <FormPage formData={fileData} setFormData={setFileData} />
+      <FormPage formData={formData} setFormData={setFormData} />
     </div>
   );
 };

@@ -1,34 +1,30 @@
 "use client";
 import { useState } from "react";
 import PDFDropZone from "../components/pdf-drop";
-
-type formData = {
-  name: string;
-  yoe: string;
-  skills: string;
-  education: string;
-  workExperiences: string[];
-  projects: string;
-  certifications: string;
-  languages: string;
-  contact: string;
-};
+import Reader from "@/components/Reader";
 
 export default function Home() {
-  const [fileData, setFileData] = useState<formData>({
-    name: "",
-    yoe: "",
-    skills: "",
-    education: "",
-    workExperiences: [],
-    projects: "",
-    certifications: "",
-    languages: "",
-    contact: "",
-  });
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState<
+    "idle" | "uploading" | "success" | "error"
+  >("idle");
+  const [file, setFile] = useState<File | null>(null);
   return (
     <div>
-      <PDFDropZone fileData={fileData} setFileData={setFileData} />
+      <PDFDropZone
+        file={file}
+        setFile={setFile}
+        uploadStatus={uploadStatus}
+        setUploadStatus={setUploadStatus}
+        uploadProgress={uploadProgress}
+        setUploadProgress={setUploadProgress}
+      />
+      <Reader
+        file={file}
+        uploadProgress={uploadProgress}
+        setUploadProgress={setUploadProgress}
+        setUploadStatus={setUploadStatus}
+      />
     </div>
   );
 }
