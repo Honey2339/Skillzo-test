@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import PDFDropZone from "../components/pdf-drop";
+import FormPage from "@/components/FormPage";
+import React, { useState } from "react";
 
 type formData = {
   name: string;
@@ -14,7 +14,7 @@ type formData = {
   contact: string;
 };
 
-export default function Home() {
+const Form = () => {
   const [fileData, setFileData] = useState<formData>({
     name: "",
     yoe: "",
@@ -28,7 +28,9 @@ export default function Home() {
   });
   return (
     <div>
-      <PDFDropZone fileData={fileData} setFileData={setFileData} />
+      <FormPage formData={fileData} setFormData={setFileData} />
     </div>
   );
-}
+};
+
+export default Form;
