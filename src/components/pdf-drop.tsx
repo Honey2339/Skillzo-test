@@ -17,7 +17,7 @@ export default function PDFDropZone({
   uploadProgress,
 }: {
   file: File | null;
-  setFile: (file: File) => void;
+  setFile: (file: File | null) => void;
   uploadProgress: number;
   uploadStatus: "idle" | "uploading" | "success" | "error";
   setUploadProgress: (progress: number) => void;
@@ -80,6 +80,16 @@ export default function PDFDropZone({
     return (
       Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
     );
+  };
+
+  const resetUpload = () => {
+    setFile(null);
+    setUploadProgress(0);
+    setUploadStatus("idle");
+    setErrorMessage("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   return (
@@ -302,7 +312,10 @@ export default function PDFDropZone({
                 >
                   Next
                 </Button>
-                <Button className="w-full mt-2 bg-purple-600 cursor-pointer hover:bg-purple-700 text-white">
+                <Button
+                  onClick={resetUpload}
+                  className="w-full mt-2 bg-purple-600 cursor-pointer hover:bg-purple-700 text-white"
+                >
                   Upload Another File
                 </Button>
               </motion.div>

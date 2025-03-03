@@ -75,7 +75,7 @@ const WorkExpSection = ({ formData, setFormData }: WorkExpSectionProps) => {
         {workExperiences.map((experience, index) => (
           <div
             key={experience.id}
-            className="p-4 bg-zinc-900 rounded-lg border border-zinc-500"
+            className="p-4 bg-zinc-900 rounded-lg border mb-5 border-zinc-500"
           >
             <div className="flex justify-between items-start mb-4">
               <h3 className="font-medium">Position {index + 1}</h3>
@@ -134,7 +134,7 @@ const WorkExpSection = ({ formData, setFormData }: WorkExpSectionProps) => {
                   Start Date
                 </label>
                 <Input
-                  type="date"
+                  type="month"
                   value={experience.startDate}
                   onChange={(e) =>
                     handleExperienceChange(
@@ -152,7 +152,7 @@ const WorkExpSection = ({ formData, setFormData }: WorkExpSectionProps) => {
                   End Date
                 </label>
                 <Input
-                  type="date"
+                  type="month"
                   value={experience.endDate}
                   onChange={(e) =>
                     handleExperienceChange(

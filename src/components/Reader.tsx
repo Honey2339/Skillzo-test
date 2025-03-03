@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import pdfToText from "react-pdftotext";
 import { useFormStore } from "@/app/(store)/formDataStore";
@@ -37,15 +36,12 @@ export default function Reader({
         setUploadProgress(20);
       }, 700);
       setTimeout(() => {
-        setUploadProgress(30);
-      }, 1000);
-      setTimeout(() => {
         setUploadProgress(50);
       }, 500);
 
-      // setInterval(() => {
-      //   setUploadProgress(uploadProgress + 5 < 90 ? uploadProgress + 5 : 90);
-      // }, 500);
+      setInterval(() => {
+        setUploadProgress(uploadProgress + 90);
+      }, 100);
 
       const geminiResponse = await analyzeResumeWithGemini(
         geminiApiKey,

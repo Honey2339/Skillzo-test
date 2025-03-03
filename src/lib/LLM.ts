@@ -1,6 +1,7 @@
 "use client";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { FormData } from "./types";
 
 interface GeminiResponse {
   parsedResume: {
@@ -45,22 +46,22 @@ export async function analyzeResumeWithGemini(
       "name": "Full name of the candidate",
       "yoe": "Years of experience (if found)",
       "skills": "List of skills",
-      "education": "Education details",
+      "education": "Education details (Should be in string (SEPARATED BY LINES))",
       "workExperiences": [
         {
           "id": "number",
           "jobTitle": "Job title",
           "employer": "Company name",
           "description": "Job description",
-          "startDate": "Start date",
-          "endDate": "End date",
+          "startDate": "Start date (MONTH, YEAR)",
+          "endDate": "End date (MONTH, YEAR)",
           "current": "Boolean value if currently working"
         }
       ],
-      "projects": "Projects information, every project should have a title and description with bullet points (do not include title and description)",
+      "projects": "Projects information, every project should have a title and description with bullet points (do not include title and description (IT SHOULD BE A STRING))",
       "certifications": "Any certifications",
       "languages": "Languages known",
-      "contact": "Contact information (simple text)"
+      "contact": "Contact information (Should be in string (SEPARATED BY LINES))"
     }
   }
   
@@ -82,5 +83,62 @@ export async function analyzeResumeWithGemini(
   } catch (error) {
     console.error("Error analyzing resume with Gemini:", error);
     throw new Error("Failed to analyze resume with Gemini AI");
+  }
+}
+
+export async function ChatWithAI(
+  resumeText: FormData,
+  message: string
+): Promise<string> {
+  const genAI = new GoogleGenerativeAI(
+    "AIzaSyB97hJQt87N5pz20zMYjFNR8cAaBzRyo_o"
+  );
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+  const prompt = `
+  You are a professional career coach and resume expert. Analyze the following resume text and provide insightful feedback. 
+  
+  ### RULES :
+  - The whole message should be a Markdown text
+  - The message should be plain text with spaces and new lines and proper formatting
+  - The message should be professional and encouraging
+  - the message should not be more than 200 words
+  
+  ### Instructions:
+  1. **Personalized Resume Feedback**:
+     - Highlight strengths in the resume.
+     - Identify weaknesses or areas of improvement.
+     - Suggest ways to optimize formatting, clarity, or content.
+  
+  2. **Next Steps for Career Growth**:
+     - Suggest potential career paths based on their experience and skills.
+     - Recommend certifications, courses, or skills they should develop.
+     - If relevant, mention industries or roles where they can excel.
+  
+  3. **Specific Career Advice**:
+     - Provide tailored suggestions on how they can improve job applications.
+     - Advise on networking strategies, interview preparation, and personal branding.
+     - Offer any additional tips to enhance their career prospects.
+  
+  4. **Recommend Certification or Training**:
+    - Offer tailored recommendations such as skills to develop, certifications to
+      pursue, or industries to explore.
+
+  ### Resume Data (As Zustand's State):
+  ${JSON.stringify(resumeText)}
+  
+  Give structured and actionable feedback. Keep it professional yet encouraging.
+
+  Here is what the user asked:
+  ${message}
+  `;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text();
+  } catch (error) {
+    console.error("Error chatting with AI:", error);
+    throw new Error("Failed to chat with AI");
   }
 }

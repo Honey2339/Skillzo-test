@@ -4,11 +4,13 @@ import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import WorkExpSection from "./WorkExpSection";
 import { FormData, WorkExpSectionProps } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 export default function FormPage({
   formData,
   setFormData,
 }: WorkExpSectionProps) {
+  const router = useRouter();
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     const fieldName = name as keyof FormData;
@@ -19,7 +21,6 @@ export default function FormPage({
   const handleSubmit = (e: any) => {
     e.preventDefault();
     console.log(formData);
-    alert("Resume data submitted successfully!");
   };
 
   return (
@@ -171,7 +172,11 @@ export default function FormPage({
                 </div>
 
                 <div className="flex justify-end">
-                  <Button type="submit" variant="secondary">
+                  <Button
+                    onClick={() => router.push("/chat")}
+                    type="submit"
+                    variant="secondary"
+                  >
                     Next
                   </Button>
                 </div>
