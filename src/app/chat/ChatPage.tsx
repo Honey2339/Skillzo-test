@@ -43,18 +43,42 @@ export default function ChatPage() {
     setIsLoading(true);
 
     try {
-      const aiResponse = await ChatWithAI(formData, input);
+      setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
-      const aiMessage = { role: "assistant", content: aiResponse };
-      setMessages((prev) => [...prev, aiMessage]);
+      await ChatWithAI(formData, input, (chunk) => {
+        setMessages((prevMessages) => {
+          const newMessages = [...prevMessages];
+          const lastMessage = newMessages[newMessages.length - 1];
+
+          newMessages[newMessages.length - 1] = {
+            ...lastMessage,
+            content: lastMessage.content + chunk,
+          };
+
+          return newMessages;
+        });
+      });
+
+      setIsLoading(false);
     } catch (error) {
       console.error("Error chatting with AI:", error);
-      const errorMessage = {
-        role: "assistant",
-        content: "Sorry, I couldn't process your request. Please try again.",
-      };
-      setMessages((prev) => [...prev, errorMessage]);
-    } finally {
+      setMessages((prevMessages) => {
+        const newMessages = [...prevMessages];
+        if (newMessages[newMessages.length - 1].role === "assistant") {
+          newMessages[newMessages.length - 1] = {
+            role: "assistant",
+            content:
+              "Sorry, I couldn't process your request. Please try again.",
+          };
+        } else {
+          newMessages.push({
+            role: "assistant",
+            content:
+              "Sorry, I couldn't process your request. Please try again.",
+          });
+        }
+        return newMessages;
+      });
       setIsLoading(false);
     }
   };
@@ -108,7 +132,7 @@ export default function ChatPage() {
                 </div>
               ))
             )}
-            {isLoading && (
+            {isLoading && messages[messages.length - 1]?.content === "" && (
               <div className="p-4 rounded-lg bg-zinc-900">
                 <div className="flex items-start">
                   <div className="w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center mr-3">

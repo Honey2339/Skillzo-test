@@ -5,6 +5,7 @@ import { useFormStore } from "@/app/(store)/formDataStore";
 import { analyzeResumeWithGemini } from "@/lib/LLM";
 import "dotenv/config";
 import { FormData } from "@/lib/types";
+import JsonRenderer from "./JsonRenderer";
 
 export default function Reader({
   file,
@@ -17,7 +18,7 @@ export default function Reader({
   setUploadProgress: (progress: number) => void;
   setUploadStatus: (status: "idle" | "uploading" | "success" | "error") => void;
 }) {
-  const { setFormData } = useFormStore();
+  const { formData, setFormData } = useFormStore();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,7 +51,7 @@ export default function Reader({
 
       setUploadProgress(100);
       setUploadStatus("success");
-      setFormData(geminiResponse.parsedResume as unknown as FormData);
+      setFormData(geminiResponse as unknown);
     } catch (error) {
       console.error("Error in extraction or analysis:", error);
       setError("Failed to process the PDF. Please try again.");

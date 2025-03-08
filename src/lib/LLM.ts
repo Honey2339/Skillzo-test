@@ -35,35 +35,12 @@ export async function analyzeResumeWithGemini(
 
   const prompt = `
   Analyze the following resume text and extract structured information. 
-  Also provide an analysis of the resume's strengths and areas for improvement.
   
   RESUME TEXT:
   ${resumeText}
   
-  Return your response as a JSON object with the following structure:
-  {
-    "parsedResume": {
-      "name": "Full name of the candidate",
-      "yoe": "Years of experience (if found)",
-      "skills": "List of skills",
-      "education": "Education details (Should be in string (SEPARATED BY LINES))",
-      "workExperiences": [
-        {
-          "id": "number",
-          "jobTitle": "Job title",
-          "employer": "Company name",
-          "description": "Job description",
-          "startDate": "Start date (MONTH, YEAR)",
-          "endDate": "End date (MONTH, YEAR)",
-          "current": "Boolean value if currently working"
-        }
-      ],
-      "projects": "Projects information, every project should have a title and description with bullet points (do not include title and description (IT SHOULD BE A STRING))",
-      "certifications": "Any certifications",
-      "languages": "Languages known",
-      "contact": "Contact information (Should be in string (SEPARATED BY LINES))"
-    }
-  }
+  Return your response as a JSON object which has atributes like name yoe etc.
+  Make the first letter of each key uppercase and should be sequencial like first should be name yoe etc. Use meaningful name for keys
   
   Ensure your response is strictly in valid JSON format.
   `;
@@ -88,7 +65,8 @@ export async function analyzeResumeWithGemini(
 
 export async function ChatWithAI(
   resumeText: FormData,
-  message: string
+  message: string,
+  onChunk: (chunk: string) => void
 ): Promise<string> {
   const genAI = new GoogleGenerativeAI(
     "AIzaSyB97hJQt87N5pz20zMYjFNR8cAaBzRyo_o"
@@ -134,7 +112,15 @@ export async function ChatWithAI(
   `;
 
   try {
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContentStream(prompt);
+    let fullResponse = "";
+
+    for await (const chunk of result.stream) {
+      const chunkText = chunk.text();
+      fullResponse += chunkText;
+      onChunk(chunkText);
+    }
+
     const response = await result.response;
     return response.text();
   } catch (error) {

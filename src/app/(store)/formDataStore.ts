@@ -1,40 +1,11 @@
-import { FormData } from "@/lib/types";
 import { create } from "zustand";
 
-interface FormStore {
-  formData: FormData;
-  setFormData: (data: Partial<FormData>) => void;
-  resetForm: () => void;
+interface FormState {
+  formData: any;
+  setFormData: (data: any) => void;
 }
 
-export const useFormStore = create<FormStore>((set) => ({
-  formData: {
-    name: "",
-    yoe: "",
-    skills: "",
-    education: "",
-    workExperiences: [],
-    projects: "",
-    certifications: "",
-    languages: "",
-    contact: "",
-  },
-  setFormData: (data) =>
-    set((state) => ({
-      formData: { ...state.formData, ...data },
-    })),
-  resetForm: () =>
-    set({
-      formData: {
-        name: "",
-        yoe: "",
-        skills: "",
-        education: "",
-        workExperiences: [],
-        projects: "",
-        certifications: "",
-        languages: "",
-        contact: "",
-      },
-    }),
+export const useFormStore = create<FormState>((set) => ({
+  formData: {},
+  setFormData: (data) => set({ formData: data }),
 }));
